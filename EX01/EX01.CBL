@@ -16,4 +16,51 @@
            ORGANIZATION IS LINE SEQUENTIAL.
            SELECT CADCLI2 ASSIGN TO DISK
            ORGANIZATION IS LINE SEQUENTIAL.
-           
+
+       DATA DIVISION.
+       FILE SECTION.
+
+       FD CADCLI1
+           LABEL RECORD ARE STANDARD
+           VALUE OF FILE-ID IS "CADCLI1.TXT".
+
+       01 REG-CADCLI1.
+           02 COD-ENT  PIC 9(05).
+           02 NOME-ENT PIC X(20).
+
+       FD CADCLI2
+           LABEL RECORD ARE STANDARD
+           VALUE OF FILE-ID IS "CADCLI2.TXT".
+
+       01 REG-CADCLI2.
+           02 NOME-SAI PIC X(20).
+           02 COD-SAI  PIC 9(05).
+
+       WORKING-STORAGE SECTION.
+       77 FIM-ARQ PIC X(03) VALUE "NAO".
+
+       PROCEDURE DIVISION.
+           PERFORM INICIO
+           PERFORM PRINCIPAL UNTIL FIM-ARQ = "SIM"
+           PERFORM TERMINO
+           STOP RUN.
+
+       INICIO.
+           OPEN INPUT CADCLI1 OUTPUT CADCLI2.
+           PERFORM LEITURA.
+
+       LEITURA.
+           READ CADCLI1 AT END
+               MOVE "SIM" TO FIM-ARQ.
+
+       PRINCIPAL.
+           PERFORM GRAVACAO.
+           PERFORM LEITURA.
+
+       GRAVACAO.
+           MOVE COD-ENT TO COD-SAI.
+           MOVE NOME-ENT TO NOME-SAI.
+           WRITE REG-CADCLI2.
+
+       TERMINO.
+           CLOSE CADCLI1 CADCLI2.
