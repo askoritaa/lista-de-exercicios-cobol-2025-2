@@ -1,0 +1,80 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.   EX03.
+       AUTHOR.       LUCAS SILVA.
+       DATE-WRITTEN. 2025-09-09.
+       DATE-COMPILED.
+
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT CADALU ASSIGN TO DISK
+           ORGANIZATION IS LINE SEQUENTIAL.
+           SELECT CADATU ASSIGN TO DISK
+           ORGANIZATION IS LINE SEQUENTIAL.
+
+       DATA DIVISION.
+       FILE SECTION.
+
+       FD CADALU 
+           LABEL RECORD ARE STANDARD
+           VALUE OF FILE-ID IS "CADALU.TXT".
+
+       01 REG-CADALU.
+           02 NUM-ENT  PIC 9(05).
+           02 NOME-ENT PIC X(20).
+           02 NOTA1    PIC 9(2)V99.
+           02 NOTA2    PIC 9(2)V99.
+           02 NOTA3    PIC 9(2)V99.
+           02 NOTA4    PIC 9(2)V99.
+           02 SEX-ENT  PIC X(01).
+
+       FD CADATU
+           LABEL RECORD ARE STANDARD
+           VALUE OF FILE-ID IS "CADATU.TXT".
+
+       01 REG-CADATU.
+           02 NUM-SAI  PIC 9(05).
+           02 NOME-SAI PIC X(20).
+           02 MEDIA    PIC 9(2)V99.
+           02 SEX-SAI  PIC X(01).
+
+       WORKING-STORAGE SECTION.
+       77 FIM-ARQ PIC X(03) VALUE "NAO".
+       77 SOMA-NOTA PIC 9(2)V99 VALUE ZEROS.
+       77 WMEDIA    PIC 9(2)V99 VALUE ZEROS.
+
+       PROCEDURE DIVISION.
+           PERFORM INICIO
+           PERFORM PRINCIPAL UNTIL FIM-ARQ = "SIM"
+           PERFORM TERMINO
+           STOP RUN.
+
+       INICIO.
+           OPEN INPUT CADALU OUTPUT CADATU.
+           PERFORM LEITURA.
+
+       LEITURA.
+           READ CADALU AT END
+               MOVE "SIM" TO FIM-ARQ.
+
+       PRINCIPAL.
+           PERFORM GRAVACAO.
+           PERFORM LEITURA.
+
+       GRAVACAO.
+           IF SEX-ENT = "F" THEN
+                MOVE NUM-ENT TO NUM-SAI
+                MOVE NOME-ENT TO NOME-SAI
+                MOVE WMEDIA TO MEDIA
+                MOVE SEX-ENT TO SEX-SAI
+                WRITE REG-CADATU.
+
+       CALCULA-MEDIA.
+           ADD NOTA1 NOTA2 NOTA3 NOTA4 GIVING SOMA-NOTA.
+           DIVIDE SOMA-NOTA BY 4 GIVING WMEDIA.
+       
+       TERMINO.
+           CLOSE CADALU CADATU.
