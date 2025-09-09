@@ -1,0 +1,80 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.   EX03.
+       AUTHOR.       LUCAS SILVA.
+       DATE-WRITTEN. 2025-09-09.
+       DATE-COMPILED.
+
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT CADALU ASSIGN TO DISK
+           ORGANIZATION IS LINE SEQUENTIAL.
+           SELECT CADAPR ASSIGN TO DISK
+           ORGANIZATION IS LINE SEQUENTIAL.
+
+       DATA DIVISION.
+       FILE SECTION.
+
+       FD CADALU 
+           LABEL RECORD ARE STANDARD
+           VALUE OF FILE-ID IS "CADALU.TXT".
+
+       01 REG-CADALU.
+           02 NUM-ENT  PIC 9(05).
+           02 NOME-ENT PIC X(20).
+           02 NOTA1    PIC 9(2)V99.
+           02 NOTA2    PIC 9(2)V99.
+           02 FALTA    PIC 9(02).
+
+       FD CADAPR
+           LABEL RECORD ARE STANDARD
+           VALUE OF FILE-ID IS "CADAPR.TXT".
+
+       01 REG-CADAPR.
+           02 NUM-SAI  PIC 9(05).
+           02 NOME-SAI PIC X(20).
+           02 MEDIA    PIC 9(2)V99.
+
+       WORKING-STORAGE SECTION.
+       77 FIM-ARQ   PIC X(03)   VALUE "NAO".
+       77 SOMA-NOTA PIC 9(2)V99 VALUE ZEROS.
+       77 WMEDIA    PIC 9(2)V99 VALUE ZEROS.
+
+       PROCEDURE DIVISION.
+           PERFORM INICIO
+           PERFORM PRINCIPAL UNTIL FIM-ARQ = "SIM"
+           PERFORM TERMINO
+           STOP RUN.
+
+       INICIO.
+           OPEN INPUT CADALU OUTPUT CADAPR.
+           PERFORM LEITURA.
+
+       TERMINO.
+           CLOSE CADALU.
+           CLOSE CADAPR.
+
+       LEITURA.
+           READ CADALU AT END
+               MOVE "SIM" TO FIM-ARQ.
+
+       PRINCIPAL.
+           PERFORM CALCULA-MEDIA.
+           PERFORM GRAVACAO.
+           PERFORM LEITURA.
+
+       GRAVACAO.
+           IF WMEDIA >= 7 AND FALTA <= 18 THEN
+               MOVE NUM-ENT TO NUM-SAI
+               MOVE NOME-ENT TO NOME-SAI
+               MOVE WMEDIA TO MEDIA
+               WRITE REG-CADAPR.
+
+
+       CALCULA-MEDIA.
+           ADD NOTA1 NOTA2 GIVING SOMA-NOTA.
+           DIVIDE SOMA-NOTA BY 2 GIVING WMEDIA.
+           
