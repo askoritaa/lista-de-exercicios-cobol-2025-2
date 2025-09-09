@@ -1,7 +1,6 @@
 # Lista de exercicios cobol
 
 	![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
-    [![Generic badge](https://img.shields.io/badge/madeWith-Cobol-<COLOR>.svg)](https://shields.io/)
 
 Lista de exercicios EM01 da matéria eletiva de cobol com professor Hiro e Takeshi no segundo semestre de 2025.
 Esse diretório tem a finalidade de registrar um pouco do meu progresso em cobol!
