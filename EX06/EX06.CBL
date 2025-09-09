@@ -1,0 +1,70 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.   EX03.
+       AUTHOR.       LUCAS SILVA.
+       DATE-WRITTEN. 2025-09-09.
+       DATE-COMPILED.
+
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT CADENT ASSIGN TO DISK
+           ORGANIZATION IS LINE SEQUENTIAL.
+           SELECT CADSAI ASSIGN TO DISK
+           ORGANIZATION IS LINE SEQUENTIAL.
+
+       DATA DIVISION.
+       FILE SECTION.
+
+       FD CADENT 
+           LABEL RECORD ARE STANDARD
+           VALUE OF FILE-ID IS "CADENT.TXT".
+
+       01 REG-CADENT.
+           02 MAT-ENT  PIC 9(05).
+           02 NOME-ENT PIC X(20).
+           02 SB-ENT   PIC 9(5)V99.
+
+       FD CADSAI
+           LABEL RECORD ARE STANDARD
+           VALUE OF FILE-ID IS "CADSAI.TXT".
+
+       01 REG-CADSAI.
+           02 MAT-SAI  PIC 9(05).
+           02 NOME-SAI PIC X(20).
+           02 SB-SAI   PIC 9(5)V99.
+
+
+       WORKING-STORAGE SECTION.
+       77 FIM-ARQ   PIC X(03)   VALUE "NAO".
+       
+       PROCEDURE DIVISION.
+           PERFORM INICIO
+           PERFORM PRINCIPAL UNTIL FIM-ARQ = "SIM"
+           PERFORM TERMINO
+           STOP RUN.
+
+       INICIO.
+           OPEN INPUT CADENT OUTPUT CADSAI.
+           PERFORM LEITURA.
+
+       TERMINO.
+           CLOSE CADENT.
+           CLOSE CADSAI.
+
+       LEITURA.
+           READ CADENT AT END
+               MOVE "SIM" TO FIM-ARQ.
+
+       GRAVACAO.
+           IF SB-ENT >= 3000 THEN
+               MOVE MAT-ENT TO MAT-SAI
+               MOVE NOME-ENT TO NOME-SAI
+               MOVE SB-ENT TO SB-SAI
+               WRITE REG-CADSAI.
+
+       PRINCIPAL.
+           PERFORM GRAVACAO.
+           PERFORM LEITURA.
