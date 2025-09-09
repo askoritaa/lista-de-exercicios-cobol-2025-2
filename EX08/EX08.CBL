@@ -1,0 +1,82 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.   EX08.
+       AUTHOR.       LUCAS SILVA.
+       DATE-WRITTEN. 2025-09-09.
+       DATE-COMPILED.
+
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES. DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT CADFUN ASSIGN TO DISK
+           ORGANIZATION IS LINE SEQUENTIAL.
+           SELECT CADSAI ASSIGN TO DISK
+           ORGANIZATION IS LINE SEQUENTIAL.
+
+       DATA DIVISION.
+       FILE SECTION.
+
+       FD CADFUN 
+           LABEL RECORD ARE STANDARD
+           VALUE OF FILE-ID IS "CADFUN.TXT".
+
+       01 REG-CADFUN.
+           02 COD-ENT  PIC 9(05).
+           02 NOME-ENT PIC X(20).
+           02 SB-ENT   PIC 9(5)V99.
+
+       FD CADSAI
+           LABEL RECORD ARE STANDARD
+           VALUE OF FILE-ID IS "CADSAI.TXT".
+
+       01 REG-CADSAI.
+           02 COD-SAI  PIC 9(05).
+           02 NOME-SAI PIC X(20).
+           02 SAL-REAJ PIC 9(5)V99.
+
+       WORKING-STORAGE SECTION.
+       77 FIM-ARQ   PIC X(03)   VALUE "NAO".
+       77 SR        PIC 9(5)V99 VALUE ZEROS.
+
+       PROCEDURE DIVISION.
+           PERFORM INICIO
+           PERFORM PRINCIPAL UNTIL FIM-ARQ = "SIM"
+           PERFORM TERMINO
+           STOP RUN.
+
+       INICIO.
+           OPEN INPUT CADFUN OUTPUT CADSAI.
+           PERFORM LEITURA.
+
+       TERMINO.
+           CLOSE CADFUN.
+           CLOSE CADSAI.
+
+       LEITURA.
+           READ CADFUN AT END
+               MOVE "SIM" TO FIM-ARQ.
+
+       PRINCIPAL.
+           PERFORM CALCULA-REAJUSTE.
+           PERFORM GRAVACAO.
+           PERFORM LEITURA.
+
+       GRAVACAO.
+            MOVE COD-ENT TO COD-SAI
+            MOVE NOME-ENT TO NOME-SAI
+            MOVE SR TO SAL-REAJ
+            WRITE REG-CADSAI.
+
+
+       CALCULA-REAJUSTE.
+           IF SB-ENT <= 1000 THEN
+               MULTIPLY SB-ENT BY 0.12 GIVING SR
+           ELSE
+               IF SB-ENT > 1001 AND SB-ENT < 2000 THEN
+                  MULTIPLY SB-ENT BY 0.11 GIVING SR
+               ELSE
+                  IF SB-ENT > 2000 THEN 
+                     MULTIPLY SB-ENT BY 0.10 GIVING SR.
+           
